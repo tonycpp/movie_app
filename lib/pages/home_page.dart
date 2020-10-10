@@ -7,7 +7,10 @@ class HomePage extends StatelessWidget {
   final movieProvider = new MoviesProviders();
   @override
   Widget build(BuildContext context) {
+    movieProvider.getPopular();
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Movies',
@@ -74,12 +77,17 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 5.0),
-          FutureBuilder(
-            future: movieProvider.getPopular(),
+
+          //
+          StreamBuilder(
+            stream: movieProvider.popularsStream,
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
               //
               if (snapshot.hasData) {
-                return MovieHorizontal(movies: snapshot.data);
+                return MovieHorizontal(
+                  movies: snapshot.data,
+                  nextPage: movieProvider.getPopular,
+                );
               } else {
                 return Center(child: CircularProgressIndicator());
               }
